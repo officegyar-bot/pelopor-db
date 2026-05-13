@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Peternak - TaniMart Qurban</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABLES ================= */
+        :root {
+            --primary-green: #1B4332; /* Hijau Tua */
+            --secondary-green: #2D6A4F; /* Hijau Agak Terang */
+            --white: #FFFFFF;
+            --text-dark: #223328;
+            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        /* ================= RESET & BASE ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            /* Background Mesh Gradient untuk menonjolkan efek Liquid Glass pada Card */
+            background-color: #ffffff;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(116, 198, 157, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(82, 183, 136, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(183, 228, 199, 0.6) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(45, 106, 79, 0.4) 0px, transparent 50%);
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER (Fixed Hijau Tua + Gelombang) ================= */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: var(--primary-green); /* Hijau Tua Solid */
+            color: var(--white);
+            padding: 1.5rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efek Gelombang (Wave) di bawah Header */
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; /* Menarik posisi wave ke bawah kotak header */
+            left: 0;
+            width: 100%;
+            height: 30px;
+            /* SVG Wave Pattern berwarna #1B4332 dengan preserveAspectRatio="none" agar penuh dari kiri ke kanan */
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="%231B4332" d="M0,50 C320,150 420,-50 740,50 C1060,150 1120,-50 1440,50 L1440,0 L0,0 Z"></path></svg>') no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Membuat Logo dan Teks di Tengah Horizontal */
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-logo img {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 50%;
+            background-color: var(--white); /* Latar belakang putih untuk menonjolkan logo */
+            padding: 3px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-text-container {
+            text-align: left; /* Teks rata kiri dalam wadahnya yang sudah berada di tengah */
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0; /* Diubah menjadi 0 agar lebih rapat */
+            line-height: 1.2; /* Menyesuaikan spasi antar baris judul */
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-top: 2px; /* Diberikan sedikit margin atas agar sangat rapat dengan h1 */
+        }
+
+        /* ================= LAYOUT CONTAINER ================= */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem 1.5rem;
+            padding-top: 200px; /* Padding ditingkatkan agar tidak tertutup header & wave */
+        }
+
+        /* ================= SEARCH BOX (Liquid Glass) ================= */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpSearch 0.6s ease forwards;
+            animation-delay: 0.2s; /* Muncul setelah elemen lain sedikit dimuat */
+        }
+
+        @keyframes fadeUpSearch {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.35); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            border-radius: 50px;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: var(--shadow-glass);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            background: rgba(255, 255, 255, 0.55);
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 30px 0 rgba(31, 38, 135, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .search-box i {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(27, 67, 50, 0.6);
+            font-weight: 600;
+        }
+
+        /* ================= GRID SYSTEM ================= */
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        /* ================= CARD STYLING (Liquid Glass) ================= */
+        .farm-card {
+            background: rgba(255, 255, 255, 0.35); /* Transparan Putih */
+            backdrop-filter: blur(12px); /* Blur effect */
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-glass);
+            border: 1px solid rgba(255, 255, 255, 0.6); /* Glassy edge highlight */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0; /* For staggered animation */
+            transform: translateY(20px); /* For initial animation position */
+        }
+
+        .farm-card:hover {
+            transform: translateY(-8px) !important; /* Move up on hover */
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        .card-img-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img-wrapper .main-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .farm-card:hover .card-img-wrapper .main-img {
+            transform: scale(1.08); /* Zoom on hover */
+        }
+
+        /* Badge Status (Glassy) */
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(27, 67, 50, 0.85); /* Green glass */
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--white);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        /* Avatar Peternak (Fixed Position) */
+        .farmer-avatar {
+            position: absolute;
+            bottom: 15px; /* Adjusting so it is entirely visible */
+            left: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10; /* Higher z-index to stay above glass and image */
+            background-color: var(--white);
+        }
+
+        .farmer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 2.5rem 1.5rem 1.5rem 1.5rem; /* Extra padding because of offset avatar */
+        }
+
+        .farm-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        /* Nama Provinsi */
+        .farm-province {
+            font-size: 0.9rem;
+            color: var(--primary-green);
+            opacity: 0.85;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .farm-province i {
+            color: var(--secondary-green);
+        }
+
+        /* Desain NIB Super Mewah + Glass Touch (Premium Badge Style) */
+        .farm-nib {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(145deg, rgba(27, 67, 50, 0.9) 0%, rgba(13, 36, 25, 0.9) 100%); /* Deep Green, transparent glass */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #E5D08F; /* Champagne Gold color */
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(197, 168, 89, 0.5); /* Transparent Gold border */
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            letter-spacing: 1px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animasi kilauan kemewahan pada NIB */
+        .farm-nib::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(229, 208, 143, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .farm-nib i {
+            font-size: 1.2rem;
+            color: #F9E596; /* Light Gold for icon */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            z-index: 1;
+        }
+
+        .farm-nib span {
+            z-index: 1; /* Above shine animation */
+        }
+
+        /* ================= RESPONSIVE ADJUSTMENTS ================= */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column; /* Ubah orientasi menjadi vertikal di layar kecil */
+                text-align: center;
+                gap: 10px;
+            }
+            .header-text-container {
+                text-align: center;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .header p {
+                font-size: 0.85rem;
+            }
+            .container {
+                padding-top: 220px; /* Padding lebih banyak untuk layout header mobile */
+            }
+            .farm-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="header-logo">
+                <img src="assets/logo_tmq.png" alt="Logo TaniMartQurban">
+            </div>
+            <div class="header-text-container">
+                <h1>Pelopor JPPN/Mitra Peternak TaniMart Qurban</h1>
+                <p>Daftar Pelopor JPPN/Mitra Peternak Terverifikasi Di TaniMart Qurban</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari nama peternak atau wilayah...">
+            </div>
+        </div>
+
+        <div class="farm-grid" id="farmContainer">
+            
+            <div class="farm-card">
+                <div class="card-img-wrapper">
+                    <span class="status-badge"><i class="fas fa-check-circle"></i> Terverifikasi</span>
+                    <img class="main-img" src="https://asset.kompas.com/crops/ujkxAEebSyURlGwrwyACWBW0X98=/0x0:0x0/750x500/data/photo/2022/05/18/6284ee76b4a1f.jpg" alt="Sapi Limousin di Peternakan">
+                    <div class="farmer-avatar">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Avatar Peternak">
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="farm-name">Agung Wijaya Farm</h2>
+                    <p class="farm-province"><i class="fas fa-map-marker-alt"></i> Lampung</p>
+                    <div class="farm-nib">
+                        <i class="fas fa-id-card"></i>
+                        <span>NIB: 1209384756123</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="farm-card">
+                <div class="card-img-wrapper">
+                    <span class="status-badge"><i class="fas fa-check-circle"></i> Terverifikasi</span>
+                    <img class="main-img" src="https://asset.mediaindonesia.com/news/2020/08/8b74fa22d37e4b3b037c69e1720f6636.jpg" alt="Baqoroh Jaya Farm">
+                    <div class="farmer-avatar">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="Avatar Peternak">
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="farm-name">Baqoroh Jaya Farm</h2>
+                    <p class="farm-province"><i class="fas fa-map-marker-alt"></i> Lampung</p>
+                    <div class="farm-nib">
+                        <i class="fas fa-id-card"></i>
+                        <span>NIB: 9876543210987</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="farm-card">
+                <div class="card-img-wrapper">
+                    <span class="status-badge"><i class="fas fa-check-circle"></i> Terverifikasi</span>
+                    <img class="main-img" src="https://www.harapanrakyat.com/wp-content/uploads/2023/06/Peternak-Sapi.jpg" alt="Domba Garut">
+                    <div class="farmer-avatar">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80" alt="Avatar Peternak">
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="farm-name">Berkah Setia Farm</h2>
+                    <p class="farm-province"><i class="fas fa-map-marker-alt"></i> Jawa Barat</p>
+                    <div class="farm-nib">
+                        <i class="fas fa-id-card"></i>
+                        <span>NIB: 4561237890123</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="farm-card">
+                <div class="card-img-wrapper">
+                    <span class="status-badge"><i class="fas fa-check-circle"></i> Terverifikasi</span>
+                    <img class="main-img" src="https://asset.kompas.com/crops/vnImWYAOAOa7EKnwhuo27o5MKVc=/0x0:0x0/750x500/data/photo/2022/07/08/62c816108ed25.jpg" alt="Peternakan Sapi Brahman">
+                    <div class="farmer-avatar">
+                        <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=150&q=80" alt="Avatar Peternak">
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="farm-name">Sakti Wijaya Farm</h2>
+                    <p class="farm-province"><i class="fas fa-map-marker-alt"></i> Jawa Timur</p>
+                    <div class="farm-nib">
+                        <i class="fas fa-id-card"></i>
+                        <span>NIB: 3216549870001</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Efek animasi Staggered Fade-in untuk Card
+            $('.farm-card').each(function(index) {
+                $(this).delay(150 * index).animate({
+                    opacity: 1,
+                }, {
+                    duration: 600,
+                    step: function(now, fx) {
+                        if (fx.prop === 'opacity') {
+                            let yVal = 20 - (now * 20); // Move from 20px to 0px
+                            $(this).css('transform', 'translateY(' + yVal + 'px)');
+                        }
+                    }
+                });
+            });
+
+            // Fungsionalitas Real-time Search Box
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('.farm-card').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</body>
+</html>
